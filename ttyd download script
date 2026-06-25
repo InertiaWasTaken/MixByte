@@ -2,3 +2,23 @@ wget https://github.com/tsl0922/ttyd/releases/latest/download/ttyd.aarch64
 chmod +x ttyd.aarch64
 sudo mv ttyd.aarch64 /usr/local/bin/ttyd
 ttyd --version
+sudo nano /etc/systemd/system/mixbyte-terminal.service
+
+"
+[Unit]
+Description=Mixbyte Terminal
+After=network.target
+
+[Service]
+ExecStart=/usr/local/bin/ttyd -W -p 7681 /bin/bash
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+"
+
+sudo systemctl daemon-reload
+sudo systemctl enable mixbyte-terminal.service
+sudo systemctl start mixbyte-terminal.service
+sudo systemctl status mixbyte-terminal.service
