@@ -4,3 +4,13 @@ sudo apt update
 sudo apt install -y python3 python3-venv python3-pip
 
 python3 --version
+
+mkdir -p ~/mixbyte
+(copy app.py and index.html here)
+
+cd ~/mixbyte
+python3 -m venv venv
+source venv/bin/activate
+
+pip install flask
+
