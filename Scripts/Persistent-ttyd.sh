@@ -26,7 +26,7 @@ After=network.target
 [Service]
 ExecStart=/usr/local/bin/ttyd -W -p 7681 /bin/bash
 Restart=always
-RestartSec=5
+RestartSec=3
 
 [Install]
 WantedBy=multi-user.target
