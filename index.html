@@ -7,7 +7,7 @@
     body {
       margin: 0;
       font-family: sans-serif;
-      background: #0f0f0f;
+      background: #101010;
       color: #eee;
     }
 
@@ -69,28 +69,29 @@
 <body>
 
 <div class="tabs">
-  <div class="tab" onclick="show('mic')">Microphone</div>
-  <div class="tab" onclick="show('knobs')">Knobs</div>
-  <div class="tab" onclick="show('table')">Routing</div>
+  <div class="tab" onclick="show('mic')">Microphone Settings</div>
+  <div class="tab" onclick="show('knobs')">Knob Assignment</div>
+  <div class="tab" onclick="show('table')">Routing Table</div>
   <div class="tab" onclick="show('settings')">Settings</div>
-  <div class="tab" data-tab="ssh" onclick="show('ssh')">SSH Terminal</div>
+  <div class="tab" data-tab="ssh" onclick="show('ssh')">TTYD Terminal</div>
 </div>
 
-<!-- MIC -->
 <div id="mic" class="panel active">
-  <h2>Mic Settings</h2>
+  <h2>Mic Settings (Mock)</h2>
   <div class="box">
-    Gain: 70%<br>
-    HPF: 120Hz<br>
-    Compressor: Enabled (mock)
+    Gain: +37dB<br>
+    HPF: 69Hz<br>
+    EQ: 3 band whatever<br>
+    De-Ess range: 5kHz - 10kHz<br>
+    Compressor: 4:1<br>
+    Limiter: 0dB (unchanging)
   </div>
 </div>
 
-<!-- KNOBS -->
 <div id="knobs" class="panel">
   <h2>Knob Settings</h2>
   <div class="box">
-    A → Chat<br>
+    A → Comms<br>
     B → Music<br>
     C → Game<br>
     D → Alerts<br>
@@ -99,27 +100,24 @@
   </div>
 </div>
 
-<!-- ROUTING -->
 <div id="table" class="panel">
   <h2>Routing Table</h2>
   <div class="box">
-    Chat → Headphones + Stream<br>
-    Music → Headphones only<br>
-    Game → Headphones + Stream<br>
-    Alerts → Stream only<br>
-    System → Headphones<br>
-    Extra → User defined
+    Chat → O + O<br>
+    Music → O<br>
+    Game → O + O<br>
+    Alerts → O<br>
+    System → O<br>
+    Extra → O
   </div>
 </div>
 
-<!-- SETTINGS -->
 <div id="settings" class="panel">
   <h2>Settings</h2>
 
   <div class="box">
     Device: Mixbyte v0.1<br>
-    CPU: Pi Zero 2 W<br>
-    Status: Online<br><br>
+    CPU: Pi Zero 2 W<br><br>
 
     <button onclick="toggleSSH()">Toggle SSH Tab</button>
     <br>
@@ -129,18 +127,15 @@
   </div>
 </div>
 
-<!-- SSH -->
 <div id="ssh" class="panel">
-  <h2>SSH Terminal</h2>
+  <h2>TTYD Terminal</h2>
   <iframe src="http://mixbyte.local:7681"></iframe>
 </div>
 
 <script>
 let sshEnabled = false;
 
-/* --------------------------
-   INIT SETTINGS FROM PI
--------------------------- */
+/* INIT SETTINGS FROM PI */
 async function loadSettings() {
   try {
     const res = await fetch('/api/settings');
@@ -153,17 +148,13 @@ async function loadSettings() {
   }
 }
 
-/* --------------------------
-   TAB SWITCHER
--------------------------- */
+/* TAB SWITCHER */
 function show(id) {
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
   document.getElementById(id).classList.add('active');
 }
 
-/* --------------------------
-   SSH VISIBILITY CONTROL
--------------------------- */
+/* SSH VISIBILITY CONTROL */
 function applySSHState() {
   const sshTab = document.querySelector('[data-tab="ssh"]');
 
@@ -178,9 +169,7 @@ function applySSHState() {
   }
 }
 
-/* --------------------------
-   SSH TOGGLE
--------------------------- */
+/* SSH TOGGLE */
 async function toggleSSH() {
   sshEnabled = !sshEnabled;
   applySSHState();
@@ -192,9 +181,7 @@ async function toggleSSH() {
   });
 }
 
-/* --------------------------
-   POWER CONTROLS
--------------------------- */
+/* POWER CONTROLS */
 async function rebootDevice() {
   if (!confirm("Reboot Mixbyte?")) return;
 
@@ -209,9 +196,7 @@ async function shutdownDevice() {
   alert("Shutting down...");
 }
 
-/* --------------------------
-   BOOT
--------------------------- */
+/* BOOT */
 loadSettings();
 </script>
 
