@@ -1,48 +1,5 @@
-ttyd installed first
-
-sudo apt update
-sudo apt install -y python3 python3-venv python3-pip
-
-python3 --version
-
-mkdir -p ~/mixbyte
-(copy app.py and index.html here)
-
-cd ~/mixbyte
-python3 -m venv venv
-source venv/bin/activate
-
-pip install flask
-
-sudo nano /etc/systemd/system/mixbyte.service
-
-"
-[Unit]
-Description=Mixbyte Web UI
-After=network-online.target mixbyte-gadget.service
-Wants=network-online.target
-
-[Service]
-User=inertia
-WorkingDirectory=/home/inertia/mixbyte
-ExecStart=/home/inertia/mixbyte/venv/bin/python /home/inertia/mixbyte/app.py
-Restart=always
-RestartSec=3
-
-[Install]
-WantedBy=multi-user.target
-"
-
-sudo systemctl daemon-reload
-sudo systemctl enable mixbyte.service
-sudo systemctl restart mixbyte.service
-sudo systemctl status mixbyte.service
-
-l
-l
-l
-l
-l
+ttyd installed/activated first (
+venv installed/activated second
 
 sudo nano /boot/firmware/cmdline.txt
 modules-load=dwc2,libcomposite
