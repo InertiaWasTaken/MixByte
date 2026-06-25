@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Mixbyte</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      background: #0f0f0f;
+      color: #eee;
+    }
+
+    .tabs {
+      display: flex;
+      background: #1c1c1c;
+      border-bottom: 1px solid #333;
+    }
+
+    .tab {
+      padding: 12px 16px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .tab:hover {
+      background: #2a2a2a;
+    }
+
+    .panel {
+      display: none;
+      padding: 16px;
+    }
+
+    .active {
+      display: block;
+    }
+
+    iframe {
+      width: 100%;
+      height: 75vh;
+      border: none;
+      background: black;
+    }
+
+    .box {
+      background: #101010;
+      padding: 10px;
+      border-radius: 10px;
+      margin-top: 10px;
+    }
+
+    button {
+      margin-top: 8px;
+      margin-right: 6px;
+      padding: 8px 12px;
+      background: #2a2a2a;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #3a3a3a;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="tabs">
+  <div class="tab" onclick="show('mic')">Microphone</div>
+  <div class="tab" onclick="show('knobs')">Knobs</div>
+  <div class="tab" onclick="show('table')">Routing</div>
+  <div class="tab" onclick="show('settings')">Settings</div>
+  <div class="tab" data-tab="ssh" onclick="show('ssh')">SSH Terminal</div>
+</div>
+
+<!-- MIC -->
+<div id="mic" class="panel active">
+  <h2>Mic Settings</h2>
+  <div class="box">
+    Gain: 70%<br>
+    HPF: 120Hz<br>
+    Compressor: Enabled (mock)
+  </div>
+</div>
+
+<!-- KNOBS -->
+<div id="knobs" class="panel">
+  <h2>Knob Settings</h2>
+  <div class="box">
+    A → Chat<br>
+    B → Music<br>
+    C → Game<br>
+    D → Alerts<br>
+    E → System<br>
+    F → Extra
+  </div>
+</div>
+
+<!-- ROUTING -->
+<div id="table" class="panel">
+  <h2>Routing Table</h2>
+  <div class="box">
+    Chat → Headphones + Stream<br>
+    Music → Headphones only<br>
+    Game → Headphones + Stream<br>
+    Alerts → Stream only<br>
+    System → Headphones<br>
+    Extra → User defined
+  </div>
+</div>
+
+<!-- SETTINGS -->
+<div id="settings" class="panel">
+  <h2>Settings</h2>
+
+  <div class="box">
+    Device: Mixbyte v0.1<br>
+    CPU: Pi Zero 2 W<br>
+    Status: Online<br><br>
+
+    <button onclick="toggleSSH()">Toggle SSH Tab</button>
+    <br>
+
+    <button onclick="rebootDevice()">Restart Device</button>
+    <button onclick="shutdownDevice()">Power Off</button>
+  </div>
+</div>
+
+<!-- SSH -->
+<div id="ssh" class="panel">
+  <h2>SSH Terminal</h2>
+  <iframe src="http://mixbyte.local:7681"></iframe>
+</div>
+
+<script>
+let sshEnabled = false;
+
+/* --------------------------
+   INIT SETTINGS FROM PI
+-------------------------- */
+async function loadSettings() {
+  try {
+    const res = await fetch('/api/settings');
+    const data = await res.json();
+
+    sshEnabled = data.ssh_enabled;
+    applySSHState();
+  } catch (e) {
+    console.log("Default settings used");
+  }
+}
+
+/* --------------------------
+   TAB SWITCHER
+-------------------------- */
+function show(id) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+/* --------------------------
+   SSH VISIBILITY CONTROL
+-------------------------- */
+function applySSHState() {
+  const sshTab = document.querySelector('[data-tab="ssh"]');
+
+  if (sshEnabled) {
+    sshTab.style.display = "block";
+  } else {
+    sshTab.style.display = "none";
+
+    if (document.getElementById('ssh').classList.contains('active')) {
+      show('mic');
+    }
+  }
+}
+
+/* --------------------------
+   SSH TOGGLE
+-------------------------- */
+async function toggleSSH() {
+  sshEnabled = !sshEnabled;
+  applySSHState();
+
+  await fetch('/api/settings/ssh', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ ssh_enabled: sshEnabled })
+  });
+}
+
+/* --------------------------
+   POWER CONTROLS
+-------------------------- */
+async function rebootDevice() {
+  if (!confirm("Reboot Mixbyte?")) return;
+
+  await fetch('/api/reboot', { method: 'POST' });
+  alert("Rebooting...");
+}
+
+async function shutdownDevice() {
+  if (!confirm("Shut down Mixbyte?")) return;
+
+  await fetch('/api/shutdown', { method: 'POST' });
+  alert("Shutting down...");
+}
+
+/* --------------------------
+   BOOT
+-------------------------- */
+loadSettings();
+</script>
+
+</body>
+</html>
