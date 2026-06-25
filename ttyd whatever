@@ -1,0 +1,19 @@
+sudo nano /etc/systemd/system/mixbyte-terminal.service
+
+[Unit]
+Description=Mixbyte Terminal
+After=network.target
+
+[Service]
+ExecStart=/usr/local/bin/ttyd -W -p 7681 /bin/bash
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+
+sudo systemctl daemon-reload
+sudo systemctl enable mixbyte-terminal.service
+sudo systemctl start mixbyte-terminal.service
+
+sudo systemctl status mixbyte-terminal.service
