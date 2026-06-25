@@ -1,0 +1,1 @@
+console=serial0,115200 console=tty1 root=PARTUUID=58a90eac-02 rootfstype=ext4 fsck.repair=yes rootwait cfg80211.ieee80211_regdom=US modules-load=dwc2,libcomposite

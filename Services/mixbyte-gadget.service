@@ -1,0 +1,14 @@
+[Unit]
+Description=MixByte USB Gadget
+After=sys-kernel-config.mount systemd-modules-load.service
+Requires=sys-kernel-config.mount
+
+[Service]
+Type=oneshot
+ExecStartPre=/bin/sleep 3
+ExecStart=/usr/local/bin/mixbyte-gadget.sh
+RemainAfterExit=yes
+User=root
+
+[Install]
+WantedBy=multi-user.target
